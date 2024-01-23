@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import React from 'react'
 
-import { jobFilterSchema } from '@/lib/filterValidations'
+import { JobFilterValues, jobFilterSchema } from '@/lib/filterValidations'
 
 import { jobTypes } from '@/lib/job-types'
 
@@ -9,7 +9,6 @@ import {
   Select,
   SelectContent,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
@@ -18,6 +17,7 @@ import { Input } from '../ui/input'
 import SelectNew from '../shared/SelectNew'
 import { db } from '@/lib/db'
 import { Button } from '../ui/button'
+import FormSubmitButton from '../shared/FormSubmitButton'
 
 async function filterJobs(formData: FormData) {
   'use server'
@@ -36,7 +36,11 @@ async function filterJobs(formData: FormData) {
   redirect(`/?${searchParams.toString()}`)
 }
 
-async function JobFilterSidebar() {
+interface JobFilterSidebarProps {
+  defaultValues: JobFilterValues
+}
+
+async function JobFilterSidebar({ defaultValues }: JobFilterSidebarProps) {
   const distinctLocations = (await db.job
     .findMany({
       where: { approved: true },
@@ -48,51 +52,47 @@ async function JobFilterSidebar() {
     )) as string[]
 
   return (
-    <aside className="rounded:lg sticky top-0 h-fit border bg-background md:w-[260px]">
-      <form action={filterJobs}>
+    <aside className="sticky top-0 h-fit rounded-lg border bg-background p-4 md:w-[260px]">
+      <form action={filterJobs} key={JSON.stringify(defaultValues)}>
         <div className="space-y-4">
           <div className="flex flex-col gap-2">
             <Label htmlFor="q">Search</Label>
-            <Input id="q" name="q" placeholder="Title, company, etc." />
+            <Input
+              id="q"
+              name="q"
+              placeholder="Title, company, etc."
+              defaultValue={defaultValues.q}
+            />
           </div>
           <div className="flex flex-col gap-2">
-            <Select name="type" defaultValue="">
-              <SelectTrigger className="w-[258px]">
-                <SelectValue placeholder="All Types" />
-              </SelectTrigger>
-              <SelectContent>
-                {jobTypes.map((type) => (
-                  <SelectItem key={type} value={type}>
-                    {type}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Label htmlFor="type">Type</Label>
+            <SelectNew
+              id="type"
+              name="type"
+              defaultValue={defaultValues.type || ''}
+            >
+              <option value="">All types</option>
+              {jobTypes.map((type) => (
+                <option key={type} value={type}>
+                  {type}
+                </option>
+              ))}
+            </SelectNew>
           </div>
-          <div className="">
-            <Select name="location" defaultValue="">
-              <SelectTrigger className="w-[258px]">
-                <SelectValue placeholder="All Locations" />
-              </SelectTrigger>
-              <SelectContent>
-                {distinctLocations.map((location) => (
-                  <SelectItem key={location} value={location}>
-                    {location}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            {/* <SelectNew id="location" name="location" defaultValue="">
-              <option className="" value="">
-                All locations
-              </option>
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="location">Location</Label>
+            <SelectNew
+              id="location"
+              name="location"
+              defaultValue={defaultValues.location || ''}
+            >
+              <option value="">All locations</option>
               {distinctLocations.map((location) => (
                 <option key={location} value={location}>
                   {location}
                 </option>
               ))}
-            </SelectNew> */}
+            </SelectNew>
           </div>
           <div className="flex items-center gap-2">
             <input
@@ -100,16 +100,14 @@ async function JobFilterSidebar() {
               name="remote"
               type="checkbox"
               className="scale-125 accent-black"
+              defaultChecked={defaultValues.remote}
             />
             <Label htmlFor="remote">Remote jobs</Label>
           </div>
-          <Button type="submit" className="w-full">
-            Filter jobs
-          </Button>
+          <FormSubmitButton className="w-full">Filter jobs</FormSubmitButton>
         </div>
       </form>
     </aside>
   )
 }
-
 export default JobFilterSidebar

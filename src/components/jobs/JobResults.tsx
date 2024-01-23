@@ -1,12 +1,41 @@
 import React from 'react'
 import JobListItem from './JobListItem'
 import { db } from '@/lib/db'
+import { JobFilterValues } from '@/lib/filterValidations'
+import { Prisma } from '@prisma/client'
 
-async function JobResults() {
+interface JobResultsProps {
+  filterValues: JobFilterValues
+}
+
+async function JobResults({
+  filterValues: { q, type, location, remote },
+}: JobResultsProps) {
+  const searchString = q
+    ?.split(' ')
+    .filter((word) => word.length > 0)
+    .join(' & ')
+
+  //Search filter using OR does not work with mongodb, other filters ok
+
+  const searchFilter: Prisma.JobWhereInput = searchString
+    ? {
+        OR: [],
+      }
+    : {}
+
+  const where: Prisma.JobWhereInput = {
+    AND: [
+      searchFilter,
+      type ? { type } : {},
+      location ? { location } : {},
+      remote ? { locationType: 'Remote' } : {},
+      { approved: true },
+    ],
+  }
+
   const jobs = await db.job.findMany({
-    where: {
-      approved: true,
-    },
+    where,
     orderBy: {
       createdAt: 'desc',
     },
