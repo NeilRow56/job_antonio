@@ -9,6 +9,7 @@ import {
   Select,
   SelectContent,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
@@ -55,7 +56,6 @@ async function JobFilterSidebar() {
             <Input id="q" name="q" placeholder="Title, company, etc." />
           </div>
           <div className="flex flex-col gap-2">
-            <Label htmlFor="type">Type</Label>
             <Select name="type" defaultValue="">
               <SelectTrigger className="w-[258px]">
                 <SelectValue placeholder="All Types" />
@@ -70,7 +70,6 @@ async function JobFilterSidebar() {
             </Select>
           </div>
           <div className="">
-            <Label htmlFor="location">Location</Label>
             <Select name="location" defaultValue="">
               <SelectTrigger className="w-[258px]">
                 <SelectValue placeholder="All Locations" />
