@@ -94,6 +94,15 @@ async function JobFilterSidebar() {
               ))}
             </SelectNew> */}
           </div>
+          <div className="flex items-center gap-2">
+            <input
+              id="remote"
+              name="remote"
+              type="checkbox"
+              className="scale-125 accent-black"
+            />
+            <Label htmlFor="remote">Remote jobs</Label>
+          </div>
           <Button type="submit" className="w-full">
             Filter jobs
           </Button>
