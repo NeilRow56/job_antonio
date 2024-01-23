@@ -73,7 +73,7 @@ async function JobFilterSidebar({ defaultValues }: JobFilterSidebarProps) {
             >
               <option value="">All types</option>
               {jobTypes.map((type) => (
-                <option key={type} value={type}>
+                <option key={type} value={type} className="absolute bottom-8">
                   {type}
                 </option>
               ))}
@@ -86,7 +86,9 @@ async function JobFilterSidebar({ defaultValues }: JobFilterSidebarProps) {
               name="location"
               defaultValue={defaultValues.location || ''}
             >
-              <option value="">All locations</option>
+              <option value="" className="">
+                All locations
+              </option>
               {distinctLocations.map((location) => (
                 <option key={location} value={location}>
                   {location}
