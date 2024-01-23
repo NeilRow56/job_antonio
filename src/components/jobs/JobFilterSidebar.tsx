@@ -71,7 +71,7 @@ async function JobFilterSidebar() {
           </div>
           <div className="">
             <Label htmlFor="location">Location</Label>
-            <Select name="type" defaultValue="">
+            <Select name="location" defaultValue="">
               <SelectTrigger className="w-[258px]">
                 <SelectValue placeholder="All Locations" />
               </SelectTrigger>
